@@ -13,15 +13,12 @@ st.title("COPD-Asthma Prediction App")
 st.sidebar.header("Enter Patient Information")
 age = st.sidebar.slider("Age", 10, 90, 40)
 peak_flow = st.sidebar.slider("Peak Flow (L/min)", 100, 700, 350)
-smoking_status = st.sidebar.selectbox("Smoking Status", ["Never", "Former", "Current"])
-persistent_cough = st.sidebar.selectbox("Persistent Cough", ["No", "Yes"])
-family_history = st.sidebar.selectbox("Family History", ["No", "Yes"])
+smoking_status = st.sidebar.selectbox("Smoking Status", list(label_encoders["Smoking Status"].classes_))
+persistent_cough = st.sidebar.selectbox("Persistent Cough", list(label_encoders["Persistent Cough"].classes_))
+family_history = st.sidebar.selectbox("Family History", list(label_encoders["Family History"].classes_))
 
 # Function to encode categorical values
 def encode_feature(feature_name, value):
-    if value not in label_encoders[feature_name].classes_:
-        st.error(f"Unexpected value '{value}' for {feature_name}. Please select a valid option.")
-        st.stop()
     return label_encoders[feature_name].transform([value])[0]
 
 # Convert categorical values to numerical using label encoders
