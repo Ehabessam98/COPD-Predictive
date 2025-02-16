@@ -8,41 +8,45 @@ scaler = joblib.load("scaler.pkl")
 label_encoders = joblib.load("label_encoders.pkl")
 
 # Set page configuration
-st.set_page_config(page_title="COPD-Asthma Prediction", page_icon="🫁", layout="centered")
+st.set_page_config(page_title="COPD & Asthma Prediction", page_icon="🫁", layout="wide")
 
-# Custom CSS for a modern UI
+# Custom CSS for a modern and clean UI
 st.markdown(
     """
     <style>
         body {
-            background-color: #FAE3B4;
+            background-color: #F4F6F7;
         }
         .stApp {
-            background-color: #FFF3E0;
-            padding: 20px;
-            border-radius: 15px;
+            background-color: #F8F9FA;
+        }
+        .main-container {
             max-width: 700px;
             margin: auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            color: #8B0000;
+            color: #2C3E50;
             text-align: center;
         }
         .stButton>button {
-            background-color: #E74C3C;
+            background-color: #3498DB;
             color: white;
             font-size: 18px;
             padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: 8px;
         }
         .stButton>button:hover {
-            background-color: #C0392B;
+            background-color: #2980B9;
         }
         .prediction-box {
             text-align: center;
             background-color: #2ECC71;
             color: white;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             padding: 15px;
             border-radius: 10px;
@@ -54,11 +58,14 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# Centered main container
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+
 # Title
 st.title("🫁 COPD & Asthma Prediction")
 
 # Sidebar for user input
-st.sidebar.header("📝 Enter Patient Information")
+st.sidebar.header("📋 Patient Information")
 age = st.sidebar.slider("Age", 10, 90, 40)
 peak_flow = st.sidebar.slider("Peak Flow (L/min)", 100, 700, 350)
 smoking_status = st.sidebar.selectbox("Smoking Status", ["Never", "Former", "Current"])
@@ -83,6 +90,9 @@ predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[
 
 # Display prediction result
 st.markdown(f'<div class="prediction-box">Predicted Condition: {predicted_condition}</div>', unsafe_allow_html=True)
+
+# Close main container
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
