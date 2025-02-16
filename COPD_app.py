@@ -52,25 +52,11 @@ st.subheader("🩺 Prediction Result")
 st.markdown(f"**{prediction}** (Probability: {prediction_proba:.2%})")
 st.plotly_chart(fig)
 
-# Footer - Centered & Styled
+# Footer - Centered Below the Graph
 st.markdown(
     """
-    <style>
-        .footer {
-            position: fixed;
-            bottom: 10px;
-            width: 100%;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            background-color: #0d6efd;
-            padding: 10px;
-            border-radius: 10px;
-        }
-    </style>
-    <div class="footer">
-        🚀 Created By: <span style="color: yellow;">Ehab Essam</span> 🚀
+    <div style="text-align: center; margin-top: 20px; font-size: 16px; font-weight: bold;">
+        🚀 Created By: <span style="color: blue;">Ehab Essam</span> 🚀
     </div>
     """,
     unsafe_allow_html=True
