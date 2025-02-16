@@ -23,13 +23,8 @@ def classify_condition(age, peak_flow, smoking_status, persistent_cough, family_
           persistent_cough == "Yes" and
           family_history == "Yes"):
         return "Asthma", "blue"
-    elif (age >= 40 and
-          peak_flow < copd_peak_flow_threshold and
-          smoking_status == "Current" and
-          persistent_cough == "Yes"):
-        return "COPD", "red"
     else:
-        return "Uncertain", "gray"
+        return "COPD", "red"
 
 # Streamlit UI
 st.set_page_config(layout="wide")
