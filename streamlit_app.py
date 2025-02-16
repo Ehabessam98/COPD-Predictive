@@ -13,18 +13,21 @@ st.title("COPD-Asthma Prediction App")
 st.sidebar.header("Enter Patient Information")
 age = st.sidebar.slider("Age", 10, 90, 40)
 peak_flow = st.sidebar.slider("Peak Flow (L/min)", 100, 700, 350)
-smoking_status = st.sidebar.selectbox("Smoking Status", ["Never", "Quit", "Current"])
+smoking_status = st.sidebar.selectbox("Smoking Status", ["Never", "Former", "Current"])
 persistent_cough = st.sidebar.selectbox("Persistent Cough", ["No", "Yes"])
 family_history = st.sidebar.selectbox("Family History", ["No", "Yes"])
 
 # Convert categorical values to numerical using label encoders
-try:
-    smoking_status_encoded = label_encoders["Smoking Status"].transform([smoking_status])[0]
-    persistent_cough_encoded = label_encoders["Persistent Cough"].transform([persistent_cough])[0]
-    family_history_encoded = label_encoders["Family History"].transform([family_history])[0]
-except KeyError as e:
-    st.error(f"Encoding error: {e}")
-    st.stop()
+def encode_feature(feature_name, value):
+    try:
+        return label_encoders[feature_name].transform([value])[0]
+    except KeyError:
+        st.error(f"Unexpected value for {feature_name}: {value}. Expected values: {list(label_encoders[feature_name].classes_)}")
+        st.stop()
+
+smoking_status_encoded = encode_feature("Smoking Status", smoking_status)
+persistent_cough_encoded = encode_feature("Persistent Cough", persistent_cough)
+family_history_encoded = encode_feature("Family History", family_history)
 
 # Prepare input data
 input_data = np.array([[age, peak_flow, smoking_status_encoded, persistent_cough_encoded, family_history_encoded]])
