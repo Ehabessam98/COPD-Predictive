@@ -7,17 +7,45 @@ model = joblib.load("copd_asthma_model.pkl")
 scaler = joblib.load("scaler.pkl")
 label_encoders = joblib.load("label_encoders.pkl")
 
-# Define input fields
-st.title("COPD-Asthma Prediction App")
+# Set page configuration
+st.set_page_config(page_title="COPD-Asthma Prediction", page_icon="🔍", layout="wide")
 
-st.sidebar.header("Enter Patient Information")
+# Custom CSS for a fancier UI
+st.markdown(
+    """
+    <style>
+        .stApp {
+            background-color: #FAE3B4;
+        }
+        .sidebar .sidebar-content {
+            background-color: #F4D03F;
+        }
+        h1 {
+            color: #8B0000;
+            text-align: center;
+        }
+        .prediction-result {
+            font-size: 24px;
+            font-weight: bold;
+            color: #004080;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Title
+st.title("🔬 COPD-Asthma Prediction App")
+
+# Sidebar for user input
+st.sidebar.header("📝 Enter Patient Information")
 age = st.sidebar.slider("Age", 10, 90, 40)
 peak_flow = st.sidebar.slider("Peak Flow (L/min)", 100, 700, 350)
 smoking_status = st.sidebar.selectbox("Smoking Status", ["Never", "Former", "Current"])
 persistent_cough = st.sidebar.selectbox("Persistent Cough", ["No", "Yes"])
 family_history = st.sidebar.selectbox("Family History", ["No", "Yes"])
 
-# Convert categorical values to numerical using label encoders
+# Convert categorical values to numerical
 smoking_status_encoded = label_encoders["Smoking Status"].transform([smoking_status])[0]
 persistent_cough_encoded = label_encoders["Persistent Cough"].transform([persistent_cough])[0]
 family_history_encoded = label_encoders["Family History"].transform([family_history])[0]
@@ -33,5 +61,19 @@ prediction = model.predict(input_data_scaled)
 predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[0]
 
 # Display prediction
-st.subheader("Prediction Result")
-st.write(f"**Predicted Condition:** {predicted_condition}")
+st.subheader("📌 Prediction Result")
+st.markdown(f'<p class="prediction-result">Predicted Condition: {predicted_condition}</p>', unsafe_allow_html=True)
+
+# Additional model details
+with st.expander("🔎 Model Details"):
+    st.write("🔹 **Model Raw Prediction:**", prediction[0])
+    st.write("🔹 **Prediction Probabilities:**")
+    st.table(model.predict_proba(input_data_scaled))
+    st.write("🔹 **Condition Class Labels:**")
+    st.table(label_encoders["Condition"].classes_)
+
+# Footer
+st.markdown("""
+    <hr>
+    <p style='text-align: center;'>Created by <b>Ehab Essam</b></p>
+    """, unsafe_allow_html=True)
