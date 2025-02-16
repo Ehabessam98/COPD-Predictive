@@ -35,29 +35,28 @@ expected_features = scaler.n_features_in_
 if input_data.shape[1] != expected_features:
     st.error(f"Feature mismatch: Expected {expected_features}, but got {input_data.shape[1]}. Please retrain the model with the correct features.")
 else:
-   # Scale the input data
-input_data_scaled = scaler.transform(input_data)
+    # Scale the input data
+    input_data_scaled = scaler.transform(input_data)
 
-# Debugging: Print scaled input data
-st.write("🔍 Scaled Input Data:", input_data_scaled)
+    # Debugging: Print scaled input data
+    st.write("🔍 Scaled Input Data:", input_data_scaled)
 
-# Make a prediction
-prediction = model.predict(input_data_scaled)
+    # Make a prediction
+    prediction = model.predict(input_data_scaled)
 
-# Debugging: Print model's raw prediction output
-st.write("🔍 Model Raw Prediction:", prediction)
+    # Debugging: Print model's raw prediction output
+    st.write("🔍 Model Raw Prediction:", prediction)
 
-# Check probability scores for each condition
-probabilities = model.predict_proba(input_data_scaled)
-st.write("🔍 Prediction Probabilities:", probabilities)
+    # Check probability scores for each condition
+    probabilities = model.predict_proba(input_data_scaled)
+    st.write("🔍 Prediction Probabilities:", probabilities)
 
-# Convert predicted label back to condition name
-predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[0]
+    # Convert predicted label back to condition name
+    predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[0]
 
-# Display prediction
-st.subheader("Prediction Result")
-st.write(f"**Predicted Condition:** {predicted_condition}")
-
+    # Display prediction
+    st.subheader("Prediction Result")
+    st.write(f"**Predicted Condition:** {predicted_condition}")
 
 # Footer
 st.markdown("---")
