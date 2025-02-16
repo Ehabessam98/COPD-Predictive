@@ -56,7 +56,7 @@ st.plotly_chart(fig)
 st.markdown(
     """
     <div style="text-align: center; margin-top: 20px; font-size: 16px; font-weight: bold;">
-        🚀 Created By: <span style="color: grey;">Ehab Essam</span> 🚀
+         Created By: <span style="color: grey;">Ehab Essam</span> 
     </div>
     """,
     unsafe_allow_html=True
