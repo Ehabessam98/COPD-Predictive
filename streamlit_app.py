@@ -35,3 +35,17 @@ predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[
 # Display prediction
 st.subheader("Prediction Result")
 st.write(f"**Predicted Condition:** {predicted_condition}")
+st.write("Known categories for Smoking Status:", label_encoders["Smoking Status"].classes_)
+st.write("Known categories for Persistent Cough:", label_encoders["Persistent Cough"].classes_)
+st.write("Known categories for Family History:", label_encoders["Family History"].classes_)
+def safe_encode(label_enc, value, default=0):
+    """Safely encode a label, returning a default if the value is not in training data."""
+    if value in label_enc.classes_:
+        return label_enc.transform([value])[0]
+    else:
+        return default
+
+smoking_status_encoded = safe_encode(label_encoders["Smoking Status"], smoking_status)
+persistent_cough_encoded = safe_encode(label_encoders["Persistent Cough"], persistent_cough)
+family_history_encoded = safe_encode(label_encoders["Family History"], family_history)
+
