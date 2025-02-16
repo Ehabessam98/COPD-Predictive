@@ -17,14 +17,14 @@ smoking_status = st.sidebar.selectbox("Smoking Status", ["Never", "Former", "Cur
 persistent_cough = st.sidebar.selectbox("Persistent Cough", ["No", "Yes"])
 family_history = st.sidebar.selectbox("Family History", ["No", "Yes"])
 
-# Convert categorical values to numerical using label encoders
+# Function to encode categorical values
 def encode_feature(feature_name, value):
-    try:
-        return label_encoders[feature_name].transform([value])[0]
-    except KeyError:
-        st.error(f"Unexpected value for {feature_name}: {value}. Expected values: {list(label_encoders[feature_name].classes_)}")
+    if value not in label_encoders[feature_name].classes_:
+        st.error(f"Unexpected value '{value}' for {feature_name}. Please select a valid option.")
         st.stop()
+    return label_encoders[feature_name].transform([value])[0]
 
+# Convert categorical values to numerical using label encoders
 smoking_status_encoded = encode_feature("Smoking Status", smoking_status)
 persistent_cough_encoded = encode_feature("Persistent Cough", persistent_cough)
 family_history_encoded = encode_feature("Family History", family_history)
