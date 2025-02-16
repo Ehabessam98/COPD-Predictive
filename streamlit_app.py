@@ -8,34 +8,54 @@ scaler = joblib.load("scaler.pkl")
 label_encoders = joblib.load("label_encoders.pkl")
 
 # Set page configuration
-st.set_page_config(page_title="COPD-Asthma Prediction", page_icon="🔍", layout="wide")
+st.set_page_config(page_title="COPD-Asthma Prediction", page_icon="🫁", layout="centered")
 
-# Custom CSS for a fancier UI
+# Custom CSS for a modern UI
 st.markdown(
     """
     <style>
-        .stApp {
+        body {
             background-color: #FAE3B4;
         }
-        .sidebar .sidebar-content {
-            background-color: #F4D03F;
+        .stApp {
+            background-color: #FFF3E0;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 700px;
+            margin: auto;
         }
         h1 {
             color: #8B0000;
             text-align: center;
         }
-        .prediction-result {
-            font-size: 24px;
-            font-weight: bold;
-            color: #004080;
+        .stButton>button {
+            background-color: #E74C3C;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 10px;
         }
+        .stButton>button:hover {
+            background-color: #C0392B;
+        }
+        .prediction-box {
+            text-align: center;
+            background-color: #2ECC71;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        footer {visibility: hidden;}
     </style>
     """,
     unsafe_allow_html=True
 )
 
 # Title
-st.title("🔬 COPD-Asthma Prediction App")
+st.title("🫁 COPD & Asthma Prediction")
 
 # Sidebar for user input
 st.sidebar.header("📝 Enter Patient Information")
@@ -46,37 +66,26 @@ persistent_cough = st.sidebar.selectbox("Persistent Cough", ["No", "Yes"])
 family_history = st.sidebar.selectbox("Family History", ["No", "Yes"])
 
 # Convert categorical values to numerical
-if smoking_status in label_encoders["Smoking Status"].classes_:
-    smoking_status_encoded = label_encoders["Smoking Status"].transform([smoking_status])[0]
-else:
-    smoking_status_encoded = -1  # Assign a default unknown label
-persistent_cough_encoded = label_encoders["Persistent Cough"].transform([persistent_cough])[0]
-family_history_encoded = label_encoders["Family History"].transform([family_history])[0]
+def encode_feature(feature, encoder):
+    return encoder.transform([feature])[0] if feature in encoder.classes_ else -1
+
+smoking_status_encoded = encode_feature(smoking_status, label_encoders["Smoking Status"])
+persistent_cough_encoded = encode_feature(persistent_cough, label_encoders["Persistent Cough"])
+family_history_encoded = encode_feature(family_history, label_encoders["Family History"])
 
 # Prepare input data
 input_data = np.array([[age, peak_flow, smoking_status_encoded, persistent_cough_encoded, family_history_encoded]])
-
-# Scale the input data
 input_data_scaled = scaler.transform(input_data)
 
 # Make a prediction
 prediction = model.predict(input_data_scaled)
 predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[0]
 
-# Display prediction
-st.subheader("📌 Prediction Result")
-st.markdown(f'<p class="prediction-result">Predicted Condition: {predicted_condition}</p>', unsafe_allow_html=True)
-
-# Additional model details
-with st.expander("🔎 Model Details"):
-    st.write("🔹 **Model Raw Prediction:**", prediction[0])
-    st.write("🔹 **Prediction Probabilities:**")
-    st.table(model.predict_proba(input_data_scaled))
-    st.write("🔹 **Condition Class Labels:**")
-    st.table(label_encoders["Condition"].classes_)
+# Display prediction result
+st.markdown(f'<div class="prediction-box">Predicted Condition: {predicted_condition}</div>', unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
     <hr>
-    <p style='text-align: center;'>Created by <b>Ehab Essam</b></p>
+    <p style='text-align: center; color: gray;'>Created by <b>Ehab Essam</b></p>
     """, unsafe_allow_html=True)
