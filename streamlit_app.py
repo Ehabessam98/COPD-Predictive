@@ -39,9 +39,14 @@ else:
     input_data_scaled = scaler.transform(input_data)
 
     # Make a prediction
-    prediction = model.predict(input_data_scaled)
-    predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[0]
+    prediction = model.predict(input_data_scaled)[0]  # Get single prediction
+    condition_mapping = {0: "COPD", 1: "Asthma", 2: "Healthy"}
+    predicted_condition = condition_mapping.get(prediction, "Unknown")
 
     # Display prediction
     st.subheader("Prediction Result")
     st.write(f"**Predicted Condition:** {predicted_condition}")
+
+# Footer
+st.markdown("---")
+st.markdown("<p style='text-align: center;'>Created by Ehab Essam</p>", unsafe_allow_html=True)
