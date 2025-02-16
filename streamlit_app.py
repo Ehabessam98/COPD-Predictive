@@ -46,7 +46,10 @@ persistent_cough = st.sidebar.selectbox("Persistent Cough", ["No", "Yes"])
 family_history = st.sidebar.selectbox("Family History", ["No", "Yes"])
 
 # Convert categorical values to numerical
-smoking_status_encoded = label_encoders["Smoking Status"].transform([smoking_status])[0]
+if smoking_status in label_encoders["Smoking Status"].classes_:
+    smoking_status_encoded = label_encoders["Smoking Status"].transform([smoking_status])[0]
+else:
+    smoking_status_encoded = -1  # Assign a default unknown label
 persistent_cough_encoded = label_encoders["Persistent Cough"].transform([persistent_cough])[0]
 family_history_encoded = label_encoders["Family History"].transform([family_history])[0]
 
