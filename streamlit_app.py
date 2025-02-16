@@ -51,13 +51,23 @@ else:
     probabilities = model.predict_proba(input_data_scaled)
     st.write("🔍 Prediction Probabilities:", probabilities)
 
-    # Convert predicted label back to condition name
-    predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[0]
+    # Get probabilities for each class
+    prob_copd = probabilities[0][0]
+    prob_asthma = probabilities[0][1]
+    prob_healthy = probabilities[0][2]
+
+    # Apply threshold logic for more reliable predictions
+    if prob_copd > 0.3:
+        predicted_condition = "COPD"
+    elif prob_asthma > 0.3:
+        predicted_condition = "Asthma"
+    else:
+        predicted_condition = "Healthy"
 
     # Display prediction
     st.subheader("Prediction Result")
     st.write(f"**Predicted Condition:** {predicted_condition}")
 
-# Footer
-st.markdown("---")
-st.markdown("<p style='text-align: center;'>Created by Ehab Essam</p>", unsafe_allow_html=True)
+    # Footer
+    st.markdown("---")
+    st.markdown("<p style='text-align: center;'>Created by Ehab Essam</p>", unsafe_allow_html=True)
