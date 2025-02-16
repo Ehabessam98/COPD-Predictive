@@ -1,57 +1,78 @@
 import streamlit as st
-from PIL import Image
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
 
-def classify_condition(age, peak_flow, smoking_status, persistent_cough, family_history):
-    """
-    Classify the condition based on peak flow and risk factors.
-    """
-    # Predicted normal peak flow based on an assumed reference (adjust for real cases)
-    predicted_normal = 600  # Example for an adult, should be dynamic
-    
-    # Define ranges
-    healthy_range = (400, 700)  # Healthy adults
-    copd_mild_range = (0.5 * predicted_normal, 0.8 * predicted_normal)
-    copd_moderate_range = (0.3 * predicted_normal, 0.5 * predicted_normal)
-    copd_severe_threshold = 0.3 * predicted_normal
-    asthma_mild_threshold = 0.5 * predicted_normal
-    asthma_normal_range = (0.8 * predicted_normal, predicted_normal)
-    
-    # Condition Classification
-    if healthy_range[0] <= peak_flow <= healthy_range[1] and smoking_status == "Never" and persistent_cough == "No":
-        return "Healthy", "green"
-    elif peak_flow < copd_severe_threshold or (smoking_status in ["Former", "Current"] and peak_flow <= copd_moderate_range[1]):
-        return "COPD", "red"
-    elif asthma_mild_threshold <= peak_flow <= asthma_normal_range[1]:
-        return "Asthma", "blue"
-    else:
-        return "Uncertain", "gray"
+# Initialize encoders and scaler
+label_encoders = {
+    "Smoking Status": LabelEncoder().fit(["Never", "Former", "Current"]),
+    "Persistent Cough": LabelEncoder().fit(["No", "Yes"]),
+    "Family History": LabelEncoder().fit(["No", "Yes"]),
+    "Condition": LabelEncoder().fit(["Healthy", "Asthma", "COPD", "ACOS"])
+}
+scaler = StandardScaler()
 
-# Streamlit UI
-st.set_page_config(layout="wide")
-st.title("\U0001F5A8 COPD & Asthma Prediction")  # Adding a lung symbol
+# Placeholder model (replace with a trained model)
+model = RandomForestClassifier()
 
-# Sidebar for patient input
-st.sidebar.header("\U0001F4DD Patient Information")
-age = st.sidebar.slider("Age", 10, 90, 35)
-peak_flow = st.sidebar.slider("Peak Flow (L/min)", 100, 700, 479)
+# Set page configuration
+st.set_page_config(page_title="COPD-Asthma Prediction App", page_icon="🫁", layout="wide")
+
+# Title and header
+st.markdown("<h1 style='text-align: center;'>PFA - Digital Transformation</h1>", unsafe_allow_html=True)
+st.title("🫁 COPD & Asthma Prediction App")
+
+# Sidebar for user input
+st.sidebar.header("📝 Enter Patient Information")
+age = st.sidebar.slider("Age", 10, 90, 40)
+symptom_onset_age = st.sidebar.slider("Age at Symptom Onset", 0, 90, 30)
+peak_flow = st.sidebar.slider("Peak Flow (L/min)", 100, 700, 350)
 smoking_status = st.sidebar.selectbox("Smoking Status", ["Never", "Former", "Current"])
 persistent_cough = st.sidebar.selectbox("Persistent Cough", ["No", "Yes"])
-family_history = st.sidebar.selectbox("Family History", ["No", "Yes"])
+family_history = st.sidebar.selectbox("Family History of Asthma", ["No", "Yes"])
+symptom_variability = st.sidebar.selectbox("Symptom Variability", ["No", "Yes"])
+bronchodilator_response = st.sidebar.slider("Bronchodilator Response (%)", 0, 100, 10)
 
-# Classification
-condition, color = classify_condition(age, peak_flow, smoking_status, persistent_cough, family_history)
+# Encode categorical variables
+smoking_status_encoded = label_encoders["Smoking Status"].transform([smoking_status])[0]
+persistent_cough_encoded = label_encoders["Persistent Cough"].transform([persistent_cough])[0]
+family_history_encoded = label_encoders["Family History"].transform([family_history])[0]
+
+# Prepare input data
+input_data = np.array([[age, symptom_onset_age, peak_flow, smoking_status_encoded,
+                        persistent_cough_encoded, family_history_encoded,
+                        symptom_variability == "Yes", bronchodilator_response]])
+
+# Scale the input data
+input_data_scaled = scaler.transform(input_data)
+
+# Make a prediction
+prediction = model.predict(input_data_scaled)
+predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[0]
+
+# Define color mapping for conditions
+condition_colors = {
+    "Healthy": "green",
+    "Asthma": "blue",
+    "COPD": "red",
+    "ACOS": "orange"
+}
 
 # Display prediction
-st.markdown("""
-    <div style="text-align: center; font-size: 20px;">
-        <strong>PFA - Digital Transformation</strong>
-    </div>
-""", unsafe_allow_html=True)
+st.subheader("📌 Prediction Result")
+st.markdown(f'<div style="background-color:{condition_colors[predicted_condition]};'
+            f'padding:15px;border-radius:10px;text-align:center;color:white;">'
+            f'<strong>Predicted Condition: {predicted_condition}</strong></div>',
+            unsafe_allow_html=True)
 
-st.markdown(f"""
-    <div style="background-color:{color}; padding:15px; border-radius:10px; text-align:center; font-size:24px; color:white;">
-        <strong>Predicted Condition: {condition}</strong>
-    </div>
-""", unsafe_allow_html=True)
+# Additional model details
+with st.expander("🔎 Model Details"):
+    st.write("🔹 **Model Raw Prediction:**", prediction[0])
+    st.write("🔹 **Prediction Probabilities:**")
+    st.table(model.predict_proba(input_data_scaled))
+    st.write("🔹 **Condition Class Labels:**")
+    st.table(label_encoders["Condition"].classes_)
 
-st.markdown("<br>Created by <strong>Ehab Essam</strong>", unsafe_allow_html=True)
+# Footer
+st.markdown("<hr><p style='text-align: center;'>Created by <b>Ehab Essam</b></p>", unsafe_allow_html=True)
