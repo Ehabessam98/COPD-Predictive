@@ -53,4 +53,4 @@ st.markdown(f"**{prediction}** (Probability: {prediction_proba:.2%})")
 st.plotly_chart(fig)
 
 # Footer
-st.write("Developed by [Your Name] 🚀 | Powered by Machine Learning")
+st.write("Created By: Ehab Essam")
