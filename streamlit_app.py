@@ -10,7 +10,7 @@ label_encoders = joblib.load("label_encoders.pkl")
 # Set page configuration
 st.set_page_config(page_title="COPD & Asthma Prediction", page_icon="🫁", layout="wide")
 
-# Custom CSS for a modern and clean UI
+# Custom CSS for styling
 st.markdown(
     """
     <style>
@@ -31,6 +31,13 @@ st.markdown(
         h1 {
             color: #2C3E50;
             text-align: center;
+        }
+        .header-text {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #34495E;
+            margin-bottom: 10px;
         }
         .stButton>button {
             background-color: #3498DB;
@@ -61,7 +68,10 @@ st.markdown(
 # Centered main container
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-# Title
+# New title header for "PFA - Digital Transformation"
+st.markdown('<p class="header-text">PFA - Digital Transformation</p>', unsafe_allow_html=True)
+
+# Updated Title with Proper Emoji
 st.title("🫁 COPD & Asthma Prediction")
 
 # Sidebar for user input
