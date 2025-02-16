@@ -67,6 +67,8 @@ else:
     # Display prediction
     st.subheader("Prediction Result")
     st.write(f"**Predicted Condition:** {predicted_condition}")
+    st.write("🔍 Condition Class Labels:", label_encoders["Condition"].classes_)
+
 
     # Footer
     st.markdown("---")
