@@ -40,8 +40,13 @@ prediction = model.predict(input_data_scaled)
 predicted_condition = label_encoders["Condition"].inverse_transform(prediction)[0]
 
 # Determine if the patient is Normal or has COPD/Asthma
-normal_threshold = 400 - (age * 2)  # Adjusted normal threshold
-if predicted_condition == "Normal" and peak_flow >= normal_threshold and persistent_cough == "No" and family_history == "No" and smoking_status == "No":
+if (
+    predicted_condition == "Normal" 
+    and peak_flow >= (400 - (age * 2)) 
+    and persistent_cough == "No" 
+    and family_history == "No"
+    and smoking_status == "No"
+):
     final_condition = "Normal (Healthy)"
     color = "darkgreen"
 else:
