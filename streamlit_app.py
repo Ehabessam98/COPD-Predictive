@@ -7,7 +7,7 @@ def get_prediction_color(prediction):
     elif prediction == "COPD":
         return "red"
     elif prediction == "Asthma":
-        return "yellow"
+        return "blue"
     return "gray"
 
 # Streamlit App
